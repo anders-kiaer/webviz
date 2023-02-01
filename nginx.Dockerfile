@@ -14,7 +14,7 @@ COPY --chown=node:node . /usr/src/app
 WORKDIR /usr/src/app/frontend
 ENV NODE_ENV production
 
-RUN npm ci --ignore-scripts && npm run build && node compress_static.js
+RUN npm ci --ignore-scripts && npm ci --ignore-scripts --only=dev && npm run build && node compress_static.js
 
 ######################
 # Base builder image #
