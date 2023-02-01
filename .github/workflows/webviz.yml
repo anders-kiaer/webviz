@@ -1,0 +1,29 @@
+name: webviz
+
+on:
+  pull_request:
+    branches:
+      - main
+  release:
+    types:
+      - published
+
+jobs:
+  webviz:
+    runs-on: ubuntu-latest
+    steps:
+    - name: 📖 Checkout commit locally
+      uses: actions/checkout@v2
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    - name: 🐳 Build and push Docker images
+      run: | 
+        echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io --username ${{ github.actor }} --password-stdin
+
+        source .env
+
+        docker build --build-arg NGINX_TAG=$NGINX_TAG --build-arg=NODE_TAG=$NODE_TAG -f nginx.Dockerfile -t ghcr.io/equinor/webviz_nginx:latest
+        docker push ghcr.io/equinor/webviz_nginx:latest
