@@ -19,10 +19,15 @@ jobs:
       with:
         node-version: 18
 
+    - name: GitHub Container Registry login
+      uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
     - name: 🐳 Build and push Docker images
       run: | 
-        echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io --username ${{ github.actor }} --password-stdin
-
         source .env
 
         docker build --build-arg NGINX_TAG=$NGINX_TAG --build-arg=NODE_TAG=$NODE_TAG -f nginx.Dockerfile -t ghcr.io/equinor/webviz_nginx:latest
