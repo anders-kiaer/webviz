@@ -16,20 +16,17 @@ class EnforceLoggedInMiddleware(BaseHTTPMiddleware):
 
     Additional paths can be left unprotected by specifying them in `unprotected_paths`
 
-    By default all protected paths will return status code 401 if user is not logged in,
-    but the `paths_redirected_to_login` can be used to specify a list of paths that
-    should cause redirect to the `/login` endpoint instead.
+    By default all protected paths will cause redirect to the `/login` endpoint if
+    user is not already logged in.
     """
 
     def __init__(
         self,
         app: FastAPI,
         unprotected_paths: Optional[List[str]] = None,
-        paths_redirected_to_login: Optional[List[str]] = None,
     ) -> None:
         super().__init__(app)
         self._unprotected_paths = unprotected_paths or []
-        self._paths_redirected_to_login = paths_redirected_to_login or []
 
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         print("##################################### ensure_logged_in")
@@ -61,11 +58,9 @@ class EnforceLoggedInMiddleware(BaseHTTPMiddleware):
             print(f"##### {is_logged_in=}")
 
             if not is_logged_in:
-                if path_to_check in self._paths_redirected_to_login:
-                    print("##### LOGGING IN USING REDIRECT")
-                    target_url_b64 = base64.urlsafe_b64encode(str(request.url).encode()).decode()
-                    return RedirectResponse(f"{root_path}/login?redirect_url_after_login={target_url_b64}")
-                return PlainTextResponse("Not authorized yet, must log in", 401)
+                print("##### LOGGING IN USING REDIRECT")
+                target_url_b64 = base64.urlsafe_b64encode(str(request.url).encode()).decode()
+                return RedirectResponse(f"{root_path}/login?redirect_url_after_login={target_url_b64}")
 
         response = await call_next(request)
 

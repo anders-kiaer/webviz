@@ -69,3 +69,62 @@ docker cp $CONTAINER_ID:/home/appuser/backend/poetry.lock ./backend/
 # Stop container
 docker stop $CONTAINER_ID
 ```
+
+
+# Cache data in memory
+
+Sometimes large memory sets needs to be loaded from e.g. a database in order to do
+some calculation. If the user interacts with this data through a series of requests to
+the backend, it is inefficient to load this data every time. Instead the recommended
+pattern is to load large data sets using a separate container instance bound to the
+user.
+
+Technically this is done like this:
+1) The frontend makes a requests to the (primary) backend as usual.
+2) The data demanding endpoints in the primary backend proxies the request to a separate
+   job container runnings its own server (also using FastAPI as framework), and returns
+   the result to the frontend when the job container responds.
+3) If the user does not already have a job container bound to his user ID, the
+   cloud infrastructure will spin it up (takes some seconds).
+
+On route level this is implemented like the following:
+
+**In primary backend:**
+```python
+from fastapi import Depends, Request
+
+from src.services.utils.authenticated_user import AuthenticatedUser
+from src.primary_backend.auth.auth_helper import AuthHelper
+from src.primary_backend.radix_job_utilities import proxy_to_radix_job
+
+router = APIRouter()
+
+@router.get("/some_endpoint")
+async def my_function(
+    request: Request,
+    authenticated_user: AuthenticatedUser = Depends(AuthHelper.get_authenticated_user),
+):
+    return await proxy_to_radix_job(request, authenticated_user)
+```
+
+**In user session job backend:**
+```python
+from functools import lru_cache
+from fastapi import Depends
+
+from src.services.utils.authenticated_user import AuthenticatedUser
+from src.primary_backend.auth.auth_helper import AuthHelper
+
+@app.get("/some_endpoint")
+async def root(
+    authenticated_user: AuthenticatedUser = Depends(AuthHelper.get_authenticated_user),
+):
+    return {"data": load_some_large_data_set(authenticated_user)}
+
+@lru_cache
+def load_some_large_data_set(authenticated_user):
+    ...
+```
+
+The endpoint should have the same path as shown here
+in both primary backend and the job backend.

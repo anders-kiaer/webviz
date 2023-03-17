@@ -24,7 +24,24 @@ services:
     ports:
       - 5000:5000
     environment:
+      - UVICORN_PORT=5000
       - UVICORN_RELOAD=true
+      - UVICORN_ENTRYPOINT=src.primary_backend.main:app
+      - WEBVIZ_CLIENT_SECRET
+      - WEBVIZ_SMDA_RESOURCE_SCOPE
+    volumes:
+      - ./backend/src:/home/appuser/backend/src
+
+  backend-user-session:
+    build:
+      context: .
+      dockerfile: backend.Dockerfile
+    ports:
+      - 8000:8000
+    environment:
+      - UVICORN_PORT=8000
+      - UVICORN_RELOAD=true
+      - UVICORN_ENTRYPOINT=src.user_session_backend.main:app
       - WEBVIZ_CLIENT_SECRET
       - WEBVIZ_SMDA_RESOURCE_SCOPE
     volumes:

@@ -33,6 +33,9 @@ spec:
                 envVar: WEBVIZ_SMDA_RESOURCE_SCOPE
       environmentConfig:
         - environment: prod
+          variables:
+            UVICORN_PORT: 5000
+            UVICORN_ENTRYPOINT: src.primary_backend.main:app
     - name: redis
       image: bitnami/redis:6.2.10@sha256:bd42fcdab5959ce2b21b6ea8410d4b3ee87ecb2e320260326ec731ecfcffbd0e
       ports:
@@ -42,6 +45,18 @@ spec:
         ALLOW_EMPTY_PASSWORD: yes
       environmentConfig:
         - environment: prod
+  jobs:
+    - name: backend-user-session
+      image: ghcr.io/equinor/webviz_backend:latest
+      schedulerPort: 8000
+      ports:
+        - name: http
+          port: 8000
+      environmentConfig:
+        - environment: prod
+          variables:
+            UVICORN_PORT: 8000
+            UVICORN_ENTRYPOINT: src.user_session_backend.main:app
   dnsAppAlias:
     environment: prod
     component: frontend

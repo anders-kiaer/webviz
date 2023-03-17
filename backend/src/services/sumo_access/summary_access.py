@@ -212,7 +212,9 @@ class SummaryAccess:
         resampling_frequency: Optional[Frequency] = None,
     ) -> List[datetime.datetime]:
         table, _ = self.get_vector_table(
-            self.get_vector_names()[0], resampling_frequency=resampling_frequency, realizations=None
+            self.get_vector_names()[0],
+            resampling_frequency=resampling_frequency,
+            realizations=None,
         )
 
         return pc.unique(table.column("DATE")).to_pylist()
