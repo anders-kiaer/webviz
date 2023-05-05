@@ -11,7 +11,7 @@ from src.services.sumo_access.inplace_volumetrics_access import (
     InplaceVolumetricsAccess,
 )
 from src.services.utils.authenticated_user import AuthenticatedUser
-from src.primary_backend.auth.auth_helper import AuthHelper
+from src.backend.auth.auth_helper import AuthHelper
 
 
 LOGGER = logging.getLogger(__name__)

@@ -89,13 +89,13 @@ Technically this is done like this:
 
 On route level this is implemented like the following:
 
-**In primary backend:**
+**In `src/backend/primary`:**
 ```python
 from fastapi import Depends, Request
 
 from src.services.utils.authenticated_user import AuthenticatedUser
-from src.primary_backend.auth.auth_helper import AuthHelper
-from src.primary_backend.radix_job_utilities import proxy_to_radix_job
+from src.backend.auth.auth_helper import AuthHelper
+from src.backend.primary.radix_job_utilities import proxy_to_radix_job
 
 router = APIRouter()
 
@@ -107,13 +107,13 @@ async def my_function(
     return await proxy_to_radix_job(request, authenticated_user)
 ```
 
-**In user session job backend:**
+**In `src/backend/user_session:**
 ```python
 from functools import lru_cache
 from fastapi import Depends
 
 from src.services.utils.authenticated_user import AuthenticatedUser
-from src.primary_backend.auth.auth_helper import AuthHelper
+from src.backend.auth.auth_helper import AuthHelper
 
 @app.get("/some_endpoint")
 async def root(

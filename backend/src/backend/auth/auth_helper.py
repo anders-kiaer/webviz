@@ -10,7 +10,7 @@ from fastapi.responses import RedirectResponse
 
 from src.services.utils.authenticated_user import AuthenticatedUser
 from src.services.utils.perf_timer import PerfTimer
-from src.primary_backend import config
+from src.backend import config
 
 
 class AuthHelper:

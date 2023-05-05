@@ -8,8 +8,8 @@ from starsessions.stores.redis import RedisStore
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 
 from . import config
-from .auth.auth_helper import AuthHelper
-from .auth.enforce_logged_in_middleware import EnforceLoggedInMiddleware
+from src.backend.auth.auth_helper import AuthHelper
+from src.backend.auth.enforce_logged_in_middleware import EnforceLoggedInMiddleware
 from .routers.explore import router as explore_router
 from .routers.general import router as general_router
 from .routers.inplace_volumetrics.router import router as inplace_volumetrics_router
