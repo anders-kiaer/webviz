@@ -7,7 +7,7 @@ from starsessions import SessionMiddleware
 from starsessions.stores.redis import RedisStore
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 
-from . import config
+from src.backend import config
 from src.backend.auth.auth_helper import AuthHelper
 from src.backend.auth.enforce_logged_in_middleware import EnforceLoggedInMiddleware
 from .routers.explore import router as explore_router
@@ -54,9 +54,11 @@ app.include_router(general_router)
 # Add out custom middleware to enforce that user is logged in
 # Also redirects to /login endpoint for some select paths
 unprotected_paths = ["/logged_in_user", "/alive", "/openapi.json"]
+paths_redirected_to_login = ["/", "/alive_protected"]
 app.add_middleware(
     EnforceLoggedInMiddleware,
     unprotected_paths=unprotected_paths,
+    paths_redirected_to_login=paths_redirected_to_login,
 )
 
 session_store = RedisStore(config.REDIS_URL)

@@ -34,4 +34,4 @@ InactivityShutdown(app, inactivity_limit_minutes=30)
 async def root(
     authenticated_user: AuthenticatedUser = Depends(AuthHelper.get_authenticated_user),
 ):
-    return {"message": f"Hello user with userId {authenticated_user._user_id}"}
+    return {"message": f"Hello {authenticated_user.get_username()}"}
