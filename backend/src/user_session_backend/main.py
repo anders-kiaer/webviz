@@ -2,8 +2,8 @@ from fastapi import FastAPI, Depends
 from starsessions import SessionMiddleware
 from starsessions.stores.redis import RedisStore
 
-from src.services.utils.authenticated_user import AuthenticatedUser
 from src.primary_backend import config
+from src.services.utils.authenticated_user import AuthenticatedUser
 from src.primary_backend.auth.auth_helper import AuthHelper
 from src.primary_backend.auth.enforce_logged_in_middleware import (
     EnforceLoggedInMiddleware,
