@@ -17,7 +17,7 @@ spec:
           port: 8080
       environmentConfig:
         - environment: prod
-    - name: backend
+    - name: backend-primary
       image: ghcr.io/equinor/webviz_backend:latest
       alwaysPullImageOnDeploy: true
       ports:

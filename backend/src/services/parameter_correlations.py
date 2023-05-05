@@ -28,9 +28,7 @@ def correlate_parameters_with_response(
     return EnsembleCorrelations(names=sorted_corr_series.index.to_list(), values=sorted_corr_series.to_list())
 
 
-def _numerical_parameters_to_pandas_table(
-    ensemble_parameters: List[EnsembleParameter],
-) -> pd.DataFrame:
+def _numerical_parameters_to_pandas_table(ensemble_parameters: List[EnsembleParameter]) -> pd.DataFrame:
     """Convert a list of ensemble parameters to a pandas dataframe"""
     data = []
     for parameter in ensemble_parameters:
@@ -51,9 +49,7 @@ def _numerical_parameters_to_pandas_table(
     return pivot_df
 
 
-def _ensemble_scalar_response_to_pandas_table(
-    ensemble_response: EnsembleScalarResponse,
-) -> pd.DataFrame:
+def _ensemble_scalar_response_to_pandas_table(ensemble_response: EnsembleScalarResponse) -> pd.DataFrame:
     """Convert a ensemble scalar response to a pandas dataframe"""
     data = []
     for real, value in zip(ensemble_response.realizations, ensemble_response.values):
