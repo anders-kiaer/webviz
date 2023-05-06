@@ -80,6 +80,19 @@ export class DefaultService {
     }
 
     /**
+     * User Bound Container
+     * Get information about user session container (note that one is started if not already running).
+     * @returns any Successful Response
+     * @throws ApiError
+     */
+    public userBoundContainer(): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'GET',
+            url: '/user_session_container',
+        });
+    }
+
+    /**
      * Root
      * @returns string Successful Response
      * @throws ApiError

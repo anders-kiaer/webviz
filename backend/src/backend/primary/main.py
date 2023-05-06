@@ -3,17 +3,13 @@ import logging
 
 from fastapi import FastAPI
 from fastapi.routing import APIRoute
-from starsessions import SessionMiddleware
-from starsessions.stores.redis import RedisStore
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 
-from src.backend import config
+from src.backend.shared_middleware import add_shared_middlewares
 from src.backend.auth.auth_helper import AuthHelper
-from src.backend.auth.enforce_logged_in_middleware import EnforceLoggedInMiddleware
 from .routers.explore import router as explore_router
 from .routers.general import router as general_router
 from .routers.inplace_volumetrics.router import router as inplace_volumetrics_router
-from .routers.grid.router import router as grid_router
 from .routers.surface.router import router as surface_router
 from .routers.timeseries.router import router as timeseries_router
 from .routers.parameters.router import router as parameters_router
@@ -45,24 +41,12 @@ app.include_router(
 app.include_router(surface_router, prefix="/surface", tags=["surface"])
 app.include_router(parameters_router, prefix="/parameters", tags=["parameters"])
 app.include_router(correlations_router, prefix="/correlations", tags=["correlations"])
-app.include_router(grid_router, prefix="/grid")
 
 authHelper = AuthHelper()
 app.include_router(authHelper.router)
 app.include_router(general_router)
 
-# Add out custom middleware to enforce that user is logged in
-# Also redirects to /login endpoint for some select paths
-unprotected_paths = ["/logged_in_user", "/alive", "/openapi.json"]
-paths_redirected_to_login = ["/", "/alive_protected"]
-app.add_middleware(
-    EnforceLoggedInMiddleware,
-    unprotected_paths=unprotected_paths,
-    paths_redirected_to_login=paths_redirected_to_login,
-)
-
-session_store = RedisStore(config.REDIS_URL)
-app.add_middleware(SessionMiddleware, store=session_store)
+add_shared_middlewares(app)
 
 app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
 

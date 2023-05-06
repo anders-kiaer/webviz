@@ -39,6 +39,12 @@ Technically this is done like this:
    the Python code can keep large data sets in memory for its lifetime and be sure
    it is always the same user accessing it.
 
+Locally during development (single user scenario) there is a single job container
+continuously running, started automatically by `docker-compose`.
+Except from starting at the same time as the primary backend, not stopping after user
+inactivity, and being limited by the developer machine resources (CPU / memory),
+this job container during development behave similar to the on demand started job containers in cloud.
+
 On route level this is implemented like the following:
 
 **In `src/backend/primary`:**
@@ -47,7 +53,7 @@ from fastapi import Depends, Request
 
 from src.services.utils.authenticated_user import AuthenticatedUser
 from src.backend.auth.auth_helper import AuthHelper
-from src.backend.primary.radix_job_utilities import proxy_to_radix_job
+from src.backend.primary.user_session_proxy import proxy_to_user_session
 
 router = APIRouter()
 
@@ -56,7 +62,7 @@ async def my_function(
     request: Request,
     authenticated_user: AuthenticatedUser = Depends(AuthHelper.get_authenticated_user),
 ):
-    return await proxy_to_radix_job(request, authenticated_user)
+    return await proxy_to_user_session(request, authenticated_user)
 ```
 
 **In `src/backend/user_session:**
