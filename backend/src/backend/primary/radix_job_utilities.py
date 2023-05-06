@@ -61,10 +61,14 @@ class RadixJobScheduler:
             async with httpx.AsyncClient() as client:
                 r = await client.post(
                     f"http://{self._name}:{self._port}/api/v1/jobs",
+                    # Maximum limits in "resources" is as of May 2023 is the specs of a single Standard_E16as_v4 node.
+                    # See https://learn.microsoft.com/en-us/azure/virtual-machines/eav4-easv4-series.
+                    # As of now we hardcode our resource requests here, but in the future maybe
+                    # these could be dynamic based on the selected ensembles by the user.
                     json={
                         "resources": {
-                            "limits": {"memory": "32Mi", "cpu": "300m"},
-                            "requests": {"memory": "16Mi", "cpu": "150m"},
+                            "limits": {"memory": "32GiB", "cpu": "2"},
+                            "requests": {"memory": "32GiB", "cpu": "1"},
                         }
                     },
                 )
