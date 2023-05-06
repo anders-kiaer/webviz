@@ -1,3 +1,5 @@
+print("Starting user session app")
+
 from typing import Dict
 
 from fastapi import FastAPI, Depends
@@ -12,6 +14,7 @@ from src.backend.auth.enforce_logged_in_middleware import (
 )
 from .inactivity_shutdown import InactivityShutdown
 
+print("Finished importing")
 
 app = FastAPI()
 
