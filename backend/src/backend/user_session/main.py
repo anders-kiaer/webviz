@@ -1,3 +1,5 @@
+from typing import Dict
+
 from fastapi import FastAPI, Depends
 from starsessions import SessionMiddleware
 from starsessions.stores.redis import RedisStore
@@ -33,5 +35,5 @@ InactivityShutdown(app, inactivity_limit_minutes=30)
 @app.get("/grid")
 async def root(
     authenticated_user: AuthenticatedUser = Depends(AuthHelper.get_authenticated_user),
-):
+) -> Dict[str, str]:
     return {"message": f"Hello {authenticated_user.get_username()}"}

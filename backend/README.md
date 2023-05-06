@@ -23,21 +23,21 @@ docker stop $CONTAINER_ID
 
 # Cache data in memory
 
-Sometimes large data sets needs to be loaded from external source. If the user interacts
+Sometimes large data sets must to be loaded from external sources. If the user interacts
 with this data through a series of requests to the backend, it is inefficient to load
 the same data every time. Instead the recommended pattern is to load these large data sets
-using a separate container instance bound to the user.
+using a separate job container instance bound to the user where it can then easily be cached.
 
 Technically this is done like this:
 1) The frontend makes a requests to the (primary) backend as usual.
-2) The data demanding endpoints in the primary backend proxies the request to a separate
-   job container runnings its own server (also using `FastAPI` as framework), and returns
-   the result to the frontend when the job container responds.
-3) If the user does not already have a job container bound to his user ID, the
+2) The "data demanding endpoints" in the primary backend proxies the request to a separate
+   job container runnings its own server (also using `FastAPI` as framework).
+3) If the user does not already have a job container bound to her/his user ID, the
    cloud infrastructure will spin it up (takes some seconds). The job container will
-   have single-user scope and automtically stops when it has not seen any new requests
+   have single-user scope and automatically stop when it has not seen any new requests
    for some time. Since the job container has lifetime and scope of a user session,
-   the Python code can keep large data sets in memory for its lifetime.
+   the Python code can keep large data sets in memory for its lifetime and be sure
+   it is always the same user accessing it.
 
 On route level this is implemented like the following:
 

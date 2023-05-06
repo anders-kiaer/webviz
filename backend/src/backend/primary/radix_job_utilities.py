@@ -1,5 +1,6 @@
 import os
 import asyncio
+from typing import Dict
 
 import httpx
 from starlette.requests import Request
@@ -21,9 +22,9 @@ class RadixJobScheduler:
 
         # TODO: This should be moved to Redis
         # key: user_id, value: name of Radix job instance
-        self._existing_job_names = {}
+        self._existing_job_names: Dict[str, str] = {}
 
-    async def _active_running_job(self, user_id: str):
+    async def _active_running_job(self, user_id: str) -> bool:
         """Returns true if there already is a running job for logged in user."""
 
         existing_job_name = self._existing_job_names.get(user_id)
@@ -49,7 +50,7 @@ class RadixJobScheduler:
 
         return True
 
-    async def _create_new_job(self, user_id: str):
+    async def _create_new_job(self, user_id: str) -> None:
         """Create a new Radix job by sending request to Radix job scheduler.
         If localhost development, simply return already running container with
         same name."""
@@ -89,7 +90,7 @@ class RadixJobScheduler:
 RADIX_JOB_SCHEDULER_INSTANCE = RadixJobScheduler("backend-user-session", 8000)
 
 
-async def proxy_to_radix_job(request: Request, authenticated_user: AuthenticatedUser):
+async def proxy_to_radix_job(request: Request, authenticated_user: AuthenticatedUser) -> StreamingResponse:
     # Ideally this function should probably be a starlette/FastAPI middleware, but it appears that
     # it is not yet possible to put middleware on single routes through decorator like in express.js.
 
