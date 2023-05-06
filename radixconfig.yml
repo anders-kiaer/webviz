@@ -52,6 +52,14 @@ spec:
       ports:
         - name: http
           port: 8000
+      secretRefs:
+        azureKeyVaults:
+          - name: webviz
+            items:
+              - name: WEBVIZ-CLIENT-SECRET
+                envVar: WEBVIZ_CLIENT_SECRET
+              - name: WEBVIZ-SMDA-RESOURCE-SCOPE
+                envVar: WEBVIZ_SMDA_RESOURCE_SCOPE
       environmentConfig:
         - environment: prod
           variables:
