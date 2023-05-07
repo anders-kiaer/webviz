@@ -9,7 +9,7 @@ LOCALHOST_DEVELOPMENT = os.environ.get("UVICORN_RELOAD") == "true"
 
 
 class InactivityShutdown:
-    def __init__(self, app: FastAPI, inactivity_limit_minutes: int = 30) -> None:
+    def __init__(self, app: FastAPI, inactivity_limit_minutes: int) -> None:
         self._time_last_request: float = time.time()
         self._inactivity_limit_seconds: int = inactivity_limit_minutes * 60
 
