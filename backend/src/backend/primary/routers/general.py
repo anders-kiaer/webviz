@@ -55,7 +55,7 @@ async def logged_in_user(request: Request) -> UserInfo:
 
 
 @router.get("/user_session_container")
-async def user_bound_container(
+async def user_session_container(
     request: Request, authenticated_user: AuthenticatedUser = Depends(AuthHelper.get_authenticated_user)
 ) -> StreamingResponse:
     """Get information about user session container (note that one is started if not already running)."""

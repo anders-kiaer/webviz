@@ -1,6 +1,6 @@
 import os
 import asyncio
-from typing import Dict
+from typing import Dict, Any
 
 import httpx
 from starlette.requests import Request
@@ -97,11 +97,14 @@ class RadixJobScheduler:
 RADIX_JOB_SCHEDULER_INSTANCE = RadixJobScheduler("backend-user-session", 8000)
 
 
-async def proxy_to_user_session(request: Request, authenticated_user: AuthenticatedUser) -> StreamingResponse:
+async def proxy_to_user_session(request: Request, authenticated_user: AuthenticatedUser) -> Any:
     # Ideally this function should probably be a starlette/FastAPI middleware, but it appears that
     # it is not yet possible to put middleware on single routes through decorator like in express.js.
 
     base_url = await RADIX_JOB_SCHEDULER_INSTANCE.get_base_url(authenticated_user._user_id)
+
+    # See https://github.com/tiangolo/fastapi/discussions/7382:
+
     client = httpx.AsyncClient(base_url=base_url)
 
     url = httpx.URL(
